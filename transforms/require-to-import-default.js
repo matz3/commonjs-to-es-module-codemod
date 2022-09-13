@@ -20,8 +20,16 @@ function transformer(file, api, options) {
     const j = api.jscodeshift;
     const logger = new Logger(file, options);
 
+    const root = j(file.source);
+
+    const getFirstNode = () => root.find(j.Program).get('body', 0).node;
+
+    // Save the comments attached to the first node
+    const firstNode = getFirstNode();
+    const { comments } = firstNode;
+
     // ------------------------------------------------------------------ SEARCH
-    const nodes = j(file.source)
+    const nodes = root
         .find(j.VariableDeclaration, {
             declarations: [
                 {
@@ -40,7 +48,7 @@ function transformer(file, api, options) {
     logger.log(`${nodes.length} nodes will be transformed`);
 
     // ----------------------------------------------------------------- REPLACE
-    return nodes
+    nodes
         .replaceWith((path) => {
             const rest = [];
             const imports = [];
@@ -138,8 +146,15 @@ function transformer(file, api, options) {
                 return [...imports, j.variableDeclaration(path.node.kind, rest)];
             }
             return imports;
-        })
-        .toSource();
+        });
+
+    // If the first node has been modified or deleted, reattach the comments
+    const firstNode2 = getFirstNode();
+    if (firstNode2 !== firstNode) {
+        firstNode2.comments = comments;
+    }
+
+    return root.toSource();
 }
 
 export default transformer;

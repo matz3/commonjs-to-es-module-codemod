@@ -17,10 +17,17 @@ function transformer(file, api, options) {
     const j = api.jscodeshift;
     const logger = new Logger(file, options);
 
+    const root = j(file.source);
+
+    const getFirstNode = () => root.find(j.Program).get('body', 0).node;
+
+    // Save the comments attached to the first node
+    const firstNode = getFirstNode();
+    const { comments } = firstNode;
+
     // ------------------------------------------------------------------ SEARCH
     // https://astexplorer.net/#/gist/334f5bd39244c7feab38a3fd3cc0ce7f/c332a5b4cbd1a9718e644febf2dce9e9bd032d1b
-    const ast = j(file.source)
-    const moduleExportNodes = ast
+    const moduleExportNodes = root
         .find(j.ExpressionStatement, {
             expression: {
                 left: {
@@ -39,7 +46,7 @@ function transformer(file, api, options) {
         })
         .filter(isTopNode);
 
-    const exportNodes = ast
+    const exportNodes = root
         .find(j.ExpressionStatement, {
             expression: {
                 left: {
@@ -74,7 +81,14 @@ function transformer(file, api, options) {
         .replaceWith(replace)
     moduleExportNodes
         .replaceWith(replace)
-    return ast.toSource();
+    
+    // If the first node has been modified or deleted, reattach the comments
+    const firstNode2 = getFirstNode();
+    if (firstNode2 !== firstNode) {
+        firstNode2.comments = comments;
+    }
+
+    return root.toSource();
 }
 
 export default transformer;
