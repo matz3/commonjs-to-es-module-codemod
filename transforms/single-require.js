@@ -12,6 +12,7 @@
 
 import Logger from "./utils/logger";
 import { isTopNode } from "./utils/filters";
+import {normalizeSourcePath} from "./utils/sourcePath";
 
 function transformer(file, api, options) {
     const j = api.jscodeshift;
@@ -41,7 +42,7 @@ function transformer(file, api, options) {
     // ----------------------------------------------------------------- REPLACE
     nodes
         .replaceWith((path) => {
-            const sourcePath = path.node.expression.arguments.pop();
+            const sourcePath =  normalizeSourcePath(path.node.expression.arguments.pop());
             return j.importDeclaration([], sourcePath);
         });
 

@@ -14,6 +14,7 @@
 
 import Logger from "./utils/logger";
 import { isTopNode } from "./utils/filters";
+import {normalizeSourcePath} from "./utils/sourcePath";
 
 function transformer(file, api, options) {
     const j = api.jscodeshift;
@@ -54,7 +55,7 @@ function transformer(file, api, options) {
                 if (isRequireWithProp) {
                     if (declaration.id.type === "Identifier") {
                         // default import
-                        const sourcePath = declaration.init.arguments.shift();
+                        const sourcePath = normalizeSourcePath(declaration.init.arguments.shift());
                         if (declaration.init.arguments.length) {
                             logger.error(
                                 `${logger.lines(declaration)} too many arguments.` + "Aborting transformation"
@@ -84,7 +85,7 @@ function transformer(file, api, options) {
                     if (declaration.id.type === "Identifier") {
                         // default import
                         const importSpecifier = j.importDefaultSpecifier(declaration.id);
-                        const sourcePath = declaration.init.arguments.shift();
+                        const sourcePath =  normalizeSourcePath(declaration.init.arguments.shift());
                         if (declaration.init.arguments.length) {
                             logger.error(
                                 `${logger.lines(declaration)} too many arguments.` + "Aborting transformation"
@@ -110,7 +111,7 @@ function transformer(file, api, options) {
                             const value = j.identifier(property.value.name);
                             return j.importSpecifier(key, value);
                         });
-                        const sourcePath = declaration.init.arguments.shift();
+                        const sourcePath =  normalizeSourcePath(declaration.init.arguments.shift());
                         if (declaration.init.arguments.length) {
                             logger.error(
                                 `${logger.lines(declaration)} too many arguments.` + "Aborting transformation"
