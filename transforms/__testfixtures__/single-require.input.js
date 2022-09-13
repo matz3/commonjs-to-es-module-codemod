@@ -1,3 +1,6 @@
+/**
+ * Comment above first node
+ */
 require('top');
 
 function parent() {
