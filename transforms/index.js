@@ -5,8 +5,10 @@ import toNamedExport from "./module-exports-to-named-export";
 import singleRequire from "./single-require";
 import singleRequireLazy from "./single-require-lazy";
 
+import ui5ToolingAdoptImports from "./ui5-tooling-adopt-imports";
+
 const transformScripts = (fileInfo, api, options) => {
-    return [toExportDefault, toNamedImport, singleRequire, singleRequireLazy, toImportDefault, toNamedExport].reduce((input, script) => {
+    return [toExportDefault, toNamedImport, singleRequire, singleRequireLazy, toImportDefault, toNamedExport, ui5ToolingAdoptImports].reduce((input, script) => {
         return script(
             {
                 source: input

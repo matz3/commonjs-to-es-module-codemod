@@ -16,7 +16,6 @@
 
 import Logger from "./utils/logger";
 import { isTopNode } from "./utils/filters";
-import {normalizeSourcePath} from "./utils/sourcePath";
 
 function transformer(file, api, options) {
     const j = api.jscodeshift;
@@ -68,7 +67,7 @@ function transformer(file, api, options) {
                     declaration.init.property !== undefined;
                 if (isRequireWithProp) {
                     if (declaration.id.type === "Identifier") {
-                        const sourcePath =  normalizeSourcePath(declaration.init.object.arguments.shift());
+                        const sourcePath = declaration.init.object.arguments.shift();
                         if (declaration.init.object.arguments.length) {
                             logger.error(
                                 `${logger.lines(declaration)} too many arguments.` + "Aborting transformation"

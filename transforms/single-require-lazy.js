@@ -16,7 +16,6 @@
 
 import Logger from "./utils/logger";
 import { isWithinAsyncFunction } from "./utils/filters";
-import {normalizeSourcePath} from "./utils/sourcePath";
 
 function transformer(file, api, options) {
     const j = api.jscodeshift;
@@ -51,7 +50,7 @@ function transformer(file, api, options) {
     // ----------------------------------------------------------------- REPLACE
     nodes
         .replaceWith((path) => {
-            const sourcePath =  normalizeSourcePath(path.node.init.arguments.pop());
+            const sourcePath = path.node.init.arguments.pop();
             const localVariable = path.node.id;
             return j.variableDeclarator(j.objectPattern([
                 j.property("init", j.identifier("default"), localVariable)
