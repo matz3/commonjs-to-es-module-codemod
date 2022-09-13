@@ -54,7 +54,9 @@ function transformer(file, api, options) {
     // ----------------------------------------------------------------- REPLACE
     nodes
         .replaceWith((path) => {
-            return j.exportDefaultDeclaration(path.node.expression.right);
+            const exportDefaultDeclaration = j.exportDefaultDeclaration(path.node.expression.right);
+            exportDefaultDeclaration.comments = path.node.comments;
+            return exportDefaultDeclaration;
         });
 
     // If the first node has been modified or deleted, reattach the comments
