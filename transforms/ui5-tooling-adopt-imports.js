@@ -61,7 +61,7 @@ function transformer(file, api, options) {
     function adoptImport(node) {
         if (j.Literal.check(node.source)) {
             if (
-                node.source.value.startsWith(".") && !/\.(m|c)js$/.test(node.source.value) &&
+                node.source.value.startsWith(".") && !/\.(?:m|c)?js$/.test(node.source.value) &&
                 !node.source.value.endsWith("/")
             ) {
                 node.source = j.literal(node.source.value + ".js");
