@@ -11,7 +11,6 @@
  */
 
 import Logger from "./utils/logger";
-import { isTopNode } from "./utils/filters";
 
 const builtInModules = [
     "assert",
@@ -61,7 +60,10 @@ function transformer(file, api, options) {
 
     function adoptImport(node) {
         if (j.Literal.check(node.source)) {
-            if (node.source.value.startsWith(".") && !/\.(m|c)js$/.test(node.source.value)) {
+            if (
+                node.source.value.startsWith(".") && !/\.(m|c)js$/.test(node.source.value) &&
+                !node.source.value.endsWith("/")
+            ) {
                 node.source = j.literal(node.source.value + ".js");
             } else if (builtInModules.includes(node.source.value)) {
                 // Prefix native node modules
