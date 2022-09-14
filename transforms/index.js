@@ -6,9 +6,10 @@ import singleRequire from "./single-require";
 import singleRequireLazy from "./single-require-lazy";
 
 import ui5ToolingAdoptImports from "./ui5-tooling-adopt-imports";
+import ui5ToolingFixGetLogger from "./ui5-tooling-fix-getLogger";
 
 const transformScripts = (fileInfo, api, options) => {
-    return [toExportDefault, toNamedImport, singleRequire, singleRequireLazy, toImportDefault, toNamedExport, ui5ToolingAdoptImports].reduce((input, script) => {
+    return [toExportDefault, toNamedImport, singleRequire, singleRequireLazy, toImportDefault, toNamedExport, ui5ToolingAdoptImports, ui5ToolingFixGetLogger].reduce((input, script) => {
         return script(
             {
                 source: input
